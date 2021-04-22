@@ -10,58 +10,45 @@ export default function Home() {
 
     if (files.length > 0) {
       for await (const file of files) {
-        const canvas = await ConvertFileIntoCanvas(file);
-        imagesList.push(canvas.toDataURL());
+        const canvas = await convertFileIntoCanvas(file);
+        imagesList.push({ bs64: canvas.toDataURL(), fileName: file.name });
       }
+      downloadImageAsZip(imagesList);
     }
-
-    console.log(imagesList, "imagesList");
-    downloadImageAsZip(imagesList);
   };
 
   async function downloadImageAsZip(imagesList) {
-    var zip = new JSZip();
-    var timestamp = new Date().getUTCMilliseconds();
+    let zip = new JSZip();
+    const zipFileName = "image-to-canvas";
 
     // const imagesFolder = zip.folder("images_folder");
-    let index = 0;
     for await (const img of imagesList) {
       await zip.file(
-        timestamp + index + ".jpg",
-        img.replace("data:image/png;base64,", ""),
+        img.fileName,
+        img.bs64.replace("data:image/png;base64,", ""),
         {
           base64: true,
         }
       );
-      index += 1;
     }
 
-    // zip.file(timestamp, imagesList[0].replace("data:image/png;base64,", ""), {
-    //   base64: true,
-    // });
-
     zip.generateAsync({ type: "blob" }).then(function (content) {
-      saveAs(content, "ZipFileName.zip");
+      saveAs(content, `${zipFileName.replace(/\.[^/.]+$/, "")}.zip`);
     });
   }
 
-  const ConvertFileIntoCanvas = (file) => {
+  const convertFileIntoCanvas = (file) => {
     var _URL = window.URL || window.webkitURL;
     var img;
 
     return new Promise((resolve, reject) => {
       img = new Image();
       var objectUrl = _URL.createObjectURL(file);
-      console.count("lpop");
       img.onload = function () {
-        console.count("onload");
-        // console.log(this.width + " " + this.height);
-
-        const cnv = createPlaceholderCanvas(this.height, this.width);
-        console.log(cnv, "convas");
-
-        return resolve(cnv);
+        const canvas = createPlaceholderCanvas(this.height, this.width);
         _URL.revokeObjectURL(objectUrl);
+
+        return resolve(canvas);
       };
       img.src = objectUrl;
     });
@@ -70,28 +57,19 @@ export default function Home() {
   const createPlaceholderCanvas = (height, width) => {
     var canvas = document.createElement("canvas");
 
-    // canvas.id = "CursorLayer";
     canvas.width = width;
     canvas.height = height;
-    // canvas.style.position = "absolute";
-    // canvas.style.border = "1px solid";
 
     const text_color = "rgb(250 250 250)";
     const canvas_background_color = "rgb(133 119 119)";
 
+    // styling the canvas
     var ctx = canvas.getContext("2d");
-    // ctx.strokeStyle = "";
     ctx.fillStyle = text_color;
     ctx.fillRect(0, 0, width, height);
-    // ctx.fillRect(150, 150, 200, 200);
     ctx.fillStyle = canvas_background_color;
-    // ctx.fillRect(200, 50, 200, 200);
 
     // below is adding text to canvas
-    // ctx.strokeText("300*200", 100, 150);
-    // ctx.strokeStyle = "#999";
-    // ctx.lineWidth = 50;
-
     ctx.font = `${16}px serif`;
     ctx.font = `${4}vw serif`;
     ctx.textAlign = "center";
@@ -102,10 +80,9 @@ export default function Home() {
     // draw image
     // ctx.drawImage(img, 10, 10);
 
-    // print to html body
-    document.body.appendChild(canvas);
+    // print the canvas to html body
+    // document.body.appendChild(canvas);
 
-    // returning the canvas image
     return canvas;
   };
 
@@ -127,7 +104,13 @@ export default function Home() {
         <div>
           <label htmlFor="upload" className={styles.uploadImage}>
             Upload
-            <input multiple id="upload" onChange={getImages} type="file" />
+            <input
+              multiple
+              id="upload"
+              onChange={getImages}
+              accept="image/*"
+              type="file"
+            />
           </label>
         </div>
       </main>
