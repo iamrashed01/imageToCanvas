@@ -1,0 +1,7 @@
+{
+  "files.associations": {
+    "**/pages/*.js": "javascriptreact"
+  },
+  "editor.formatOnSave": true,
+  "files.autoSave": "afterDelay"
+}

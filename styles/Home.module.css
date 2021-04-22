@@ -60,6 +60,7 @@
 .description {
   line-height: 1.5;
   font-size: 1.5rem;
+  margin-bottom: 3rem;
 }
 
 .code {
@@ -119,4 +120,36 @@
     width: 100%;
     flex-direction: column;
   }
+}
+
+.brandTitle {
+  color: #0070f3;
+  margin-left: 4px;
+}
+
+.uploadImage {
+  background-color: transparent;
+  color: #0070f3;
+  border: 1px solid #0070f3;
+  height: 35px;
+  border-radius: 4px;
+  padding-left: 10px;
+  padding-right: 10px;
+  transition: all 0.3s ease 0s;
+  outline: none;
+  box-shadow: none;
+  display: inline-block;
+  width: 100px;
+  text-align: center;
+  line-height: 31px;
+}
+.uploadImage:hover {
+  background-color: #0070f3;
+  color: #fff;
+  cursor: pointer;
+}
+.uploadImage input {
+  opacity: 0;
+  width: 0;
+  height: 0;
 }
