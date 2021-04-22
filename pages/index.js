@@ -23,10 +23,10 @@ export default function Home() {
     var zip = new JSZip();
     var timestamp = new Date().getUTCMilliseconds();
 
-    const imagesFolder = zip.folder("images_folder");
+    // const imagesFolder = zip.folder("images_folder");
     let index = 0;
     for await (const img of imagesList) {
-      await imagesFolder.file(
+      await zip.file(
         timestamp + index + ".jpg",
         img.replace("data:image/png;base64,", ""),
         {
@@ -42,24 +42,7 @@ export default function Home() {
 
     zip.generateAsync({ type: "blob" }).then(function (content) {
       saveAs(content, "ZipFileName.zip");
-      console.log(content, "content");
     });
-
-    // download file
-    var saveData = (function () {
-      var a = document.createElement("a");
-      document.body.appendChild(a);
-      a.style = "display: none";
-      return function (data, fileName) {
-        var json = JSON.stringify(data),
-          blob = new Blob([json], { type: "octet/stream" }),
-          url = window.URL.createObjectURL(blob);
-        a.href = url;
-        a.download = fileName;
-        a.click();
-        window.URL.revokeObjectURL(url);
-      };
-    })();
   }
 
   const ConvertFileIntoCanvas = (file) => {
@@ -93,24 +76,24 @@ export default function Home() {
     // canvas.style.position = "absolute";
     // canvas.style.border = "1px solid";
 
-    // below is optional
+    const text_color = "rgb(250 250 250)";
+    const canvas_background_color = "rgb(133 119 119)";
 
     var ctx = canvas.getContext("2d");
-    ctx.fillStyle = "rgb(255 , 255, 255)";
-    ctx.strokeStyle = "";
+    // ctx.strokeStyle = "";
+    ctx.fillStyle = text_color;
     ctx.fillRect(0, 0, width, height);
-    ctx.fillStyle = "rgba(0, 0, 0, 1)";
     // ctx.fillRect(150, 150, 200, 200);
-    // ctx.fillStyle = "rgba(0, 0, 255, 0.2)";
+    ctx.fillStyle = canvas_background_color;
     // ctx.fillRect(200, 50, 200, 200);
 
     // below is adding text to canvas
     // ctx.strokeText("300*200", 100, 150);
     // ctx.strokeStyle = "#999";
-    // // ctx.lineWidth = 50;
-    // ctx.font = "70px Verdana";
+    // ctx.lineWidth = 50;
 
-    ctx.font = "20px serif";
+    ctx.font = `${16}px serif`;
+    ctx.font = `${4}vw serif`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.direction = "inherit";
