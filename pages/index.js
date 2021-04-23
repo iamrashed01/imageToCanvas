@@ -18,11 +18,11 @@ export default function Home() {
 
   const toggleFilterAble = () => {
     setState({
+      ...state,
       zip_filename: "",
       bg_color: "",
       label_color: "",
       filterAble: !state.filterAble,
-      uploadImagesSize: "",
     });
   };
 
@@ -64,7 +64,7 @@ export default function Home() {
             const head = "data:image/png;base64,";
             let imgFileSize = Math.round(
               ((dataURL.length - head.length) * 3) / 4
-              );
+            );
             totalDownloadedBytes += imgFileSize;
             bs64Array.push({ bs64: dataURL, fileName: file.name });
           }
