@@ -12,6 +12,8 @@ export default function Home() {
     bg_color: "",
     label_color: "",
     filterAble: false,
+    uploadImagesSize: "",
+    downloadImagesSize: "",
   });
 
   const toggleFilterAble = () => {
@@ -20,7 +22,17 @@ export default function Home() {
       bg_color: "",
       label_color: "",
       filterAble: !state.filterAble,
+      uploadImagesSize: "",
     });
+  };
+
+  const clearCanvasCurrentInfo = () => {
+    setState({
+      ...state,
+      uploadImagesSize: "",
+      downloadImagesSize: "",
+    });
+    setBs64List(null);
   };
 
   const changeHandler = ({ target: { name, value } }) => {
@@ -31,12 +43,16 @@ export default function Home() {
 
   // reciving the images from onchange handdler
   const getImagesHandler = async ({ target: { files } }) => {
-    var bs64Array = [];
+    let bs64Array = [];
     setBs64List([]);
+
+    let totalUploadedBytes = 0;
+    let totalDownloadedBytes = 0;
 
     if (files.length > 0) {
       for await (const file of files) {
         try {
+          totalUploadedBytes += file.size;
           const canvas = await convertFileIntoCanvas(
             file,
             state.bg_color,
@@ -44,7 +60,13 @@ export default function Home() {
           );
           // convert canvas into bs64 and push into an array[]
           if (canvas) {
-            bs64Array.push({ bs64: canvas.toDataURL(), fileName: file.name });
+            const dataURL = canvas.toDataURL();
+            const head = "data:image/png;base64,";
+            let imgFileSize = Math.round(
+              ((dataURL.length - head.length) * 3) / 4
+              );
+            totalDownloadedBytes += imgFileSize;
+            bs64Array.push({ bs64: dataURL, fileName: file.name });
           }
         } catch (error) {
           console.error(error.message);
@@ -57,19 +79,44 @@ export default function Home() {
         setBs64List(bs64Array);
         // install download
         // downloadImageAsZip(bs64Array, state.zip_filename);
+
+        //set total file size
+        setState({
+          ...state,
+          uploadImagesSize: formatSizeUnits(totalUploadedBytes),
+          downloadImagesSize: formatSizeUnits(totalDownloadedBytes),
+        });
+        // console.log(formatSizeUnits(totalBytes), "total file size");
       }
     } else {
-      setBs64List(null);
+      clearCanvasCurrentInfo();
     }
+  };
+
+  const formatSizeUnits = (bytes) => {
+    if (bytes >= 1073741824) {
+      bytes = (bytes / 1073741824).toFixed(2) + " GB";
+    } else if (bytes >= 1048576) {
+      bytes = (bytes / 1048576).toFixed(2) + " MB";
+    } else if (bytes >= 1024) {
+      bytes = (bytes / 1024).toFixed(2) + " KB";
+    } else if (bytes > 1) {
+      bytes = bytes + " bytes";
+    } else if (bytes == 1) {
+      bytes = bytes + " byte";
+    } else {
+      bytes = "0 bytes";
+    }
+    return bytes;
   };
 
   const downloadConvertedImages = () => {
     downloadImageAsZip(bs64List, state.zip_filename);
-    return setBs64List(null);
+    return clearCanvasCurrentInfo();
   };
 
   const resetData = () => {
-    setBs64List(null);
+    clearCanvasCurrentInfo();
   };
 
   // download bs64->images as zip
@@ -197,7 +244,7 @@ export default function Home() {
             toggleFilterAble={toggleFilterAble}
             onChange={changeHandler}
           />
-          <div>
+          <div className={styles.mainControllerButtons}>
             {bs64List && bs64List.length > 0 ? (
               <>
                 <button
@@ -209,7 +256,7 @@ export default function Home() {
                     width="16"
                     height="16"
                     fill="currentColor"
-                    class="bi bi-download"
+                    className="bi bi-download"
                     viewBox="0 0 16 16"
                   >
                     <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z" />
@@ -228,7 +275,7 @@ export default function Home() {
                     width="16"
                     height="16"
                     fill="currentColor"
-                    class="bi bi-eraser-fill"
+                    className="bi bi-eraser-fill"
                     viewBox="0 0 16 16"
                   >
                     <path d="M8.086 2.207a2 2 0 0 1 2.828 0l3.879 3.879a2 2 0 0 1 0 2.828l-5.5 5.5A2 2 0 0 1 7.879 15H5.12a2 2 0 0 1-1.414-.586l-2.5-2.5a2 2 0 0 1 0-2.828l6.879-6.879zm.66 11.34L3.453 8.254 1.914 9.793a1 1 0 0 0 0 1.414l2.5 2.5a1 1 0 0 0 .707.293H7.88a1 1 0 0 0 .707-.293l.16-.16z" />
@@ -250,7 +297,7 @@ export default function Home() {
                     >
                       <path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9z" />
                       <path
-                        fill-rule="evenodd"
+                        fillRule="evenodd"
                         d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z"
                       />
                     </svg>
@@ -266,6 +313,44 @@ export default function Home() {
                 />
               </label>
             )}
+          </div>
+
+          <div className={styles.screenFooter}>
+            <div className={styles.uploadSize}>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                fill="currentColor"
+                className="bi bi-cloud-arrow-up"
+                viewBox="0 0 16 16"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M7.646 5.146a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 6.707V10.5a.5.5 0 0 1-1 0V6.707L6.354 7.854a.5.5 0 1 1-.708-.708l2-2z"
+                />
+                <path d="M4.406 3.342A5.53 5.53 0 0 1 8 2c2.69 0 4.923 2 5.166 4.579C14.758 6.804 16 8.137 16 9.773 16 11.569 14.502 13 12.687 13H3.781C1.708 13 0 11.366 0 9.318c0-1.763 1.266-3.223 2.942-3.593.143-.863.698-1.723 1.464-2.383zm.653.757c-.757.653-1.153 1.44-1.153 2.056v.448l-.445.049C2.064 6.805 1 7.952 1 9.318 1 10.785 2.23 12 3.781 12h8.906C13.98 12 15 10.988 15 9.773c0-1.216-1.02-2.228-2.313-2.228h-.5v-.5C12.188 4.825 10.328 3 8 3a4.53 4.53 0 0 0-2.941 1.1z" />
+              </svg>
+
+              {state.uploadImagesSize && state.uploadImagesSize}
+            </div>
+            <div className={styles.downloadSize}>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                fill="currentColor"
+                className="bi bi-cloud-arrow-down"
+                viewBox="0 0 16 16"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M7.646 10.854a.5.5 0 0 0 .708 0l2-2a.5.5 0 0 0-.708-.708L8.5 9.293V5.5a.5.5 0 0 0-1 0v3.793L6.354 8.146a.5.5 0 1 0-.708.708l2 2z"
+                />
+                <path d="M4.406 3.342A5.53 5.53 0 0 1 8 2c2.69 0 4.923 2 5.166 4.579C14.758 6.804 16 8.137 16 9.773 16 11.569 14.502 13 12.687 13H3.781C1.708 13 0 11.366 0 9.318c0-1.763 1.266-3.223 2.942-3.593.143-.863.698-1.723 1.464-2.383zm.653.757c-.757.653-1.153 1.44-1.153 2.056v.448l-.445.049C2.064 6.805 1 7.952 1 9.318 1 10.785 2.23 12 3.781 12h8.906C13.98 12 15 10.988 15 9.773c0-1.216-1.02-2.228-2.313-2.228h-.5v-.5C12.188 4.825 10.328 3 8 3a4.53 4.53 0 0 0-2.941 1.1z" />
+              </svg>
+              {state.downloadImagesSize && state.downloadImagesSize}
+            </div>
           </div>
         </div>
       </main>
