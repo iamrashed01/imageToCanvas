@@ -27,9 +27,12 @@ export default function Home() {
     setState({ ...state, [name]: value });
   };
 
+  const [bs64List, setBs64List] = useState(null);
+
   // reciving the images from onchange handdler
   const getImagesHandler = async ({ target: { files } }) => {
     var bs64Array = [];
+    setBs64List([]);
 
     if (files.length > 0) {
       for await (const file of files) {
@@ -47,11 +50,26 @@ export default function Home() {
           console.error(error.message);
         }
       }
+
       // client download given images as zip
       if (bs64Array.length > 0) {
-        downloadImageAsZip(bs64Array, state.zip_filename);
+        // save bs64 array into state
+        setBs64List(bs64Array);
+        // install download
+        // downloadImageAsZip(bs64Array, state.zip_filename);
       }
+    } else {
+      setBs64List(null);
     }
+  };
+
+  const downloadConvertedImages = () => {
+    downloadImageAsZip(bs64List, state.zip_filename);
+    return setBs64List(null);
+  };
+
+  const resetData = () => {
+    setBs64List(null);
   };
 
   // download bs64->images as zip
@@ -180,16 +198,74 @@ export default function Home() {
             onChange={changeHandler}
           />
           <div>
-            <label htmlFor="upload" className={styles.uploadImage}>
-              Upload
-              <input
-                multiple
-                id="upload"
-                onChange={getImagesHandler}
-                accept="image/*"
-                type="file"
-              />
-            </label>
+            {bs64List && bs64List.length > 0 ? (
+              <>
+                <button
+                  onClick={downloadConvertedImages}
+                  className={styles.downloadButton}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    fill="currentColor"
+                    class="bi bi-download"
+                    viewBox="0 0 16 16"
+                  >
+                    <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z" />
+                    <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z" />
+                  </svg>
+                  Download
+                </button>
+                <button
+                  onClick={resetData}
+                  className={[styles.downloadButton, styles.eraserBtn].join(
+                    " "
+                  )}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    fill="currentColor"
+                    class="bi bi-eraser-fill"
+                    viewBox="0 0 16 16"
+                  >
+                    <path d="M8.086 2.207a2 2 0 0 1 2.828 0l3.879 3.879a2 2 0 0 1 0 2.828l-5.5 5.5A2 2 0 0 1 7.879 15H5.12a2 2 0 0 1-1.414-.586l-2.5-2.5a2 2 0 0 1 0-2.828l6.879-6.879zm.66 11.34L3.453 8.254 1.914 9.793a1 1 0 0 0 0 1.414l2.5 2.5a1 1 0 0 0 .707.293H7.88a1 1 0 0 0 .707-.293l.16-.16z" />
+                  </svg>
+                </button>
+              </>
+            ) : (
+              <label htmlFor="upload" className={styles.uploadImage}>
+                {bs64List === null && "Upload"}
+                {bs64List && bs64List.length <= 0 && (
+                  <>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      fill="currentColor"
+                      className={`bi bi-arrow-repeat ${styles.rotaing}`}
+                      viewBox="0 0 16 16"
+                    >
+                      <path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9z" />
+                      <path
+                        fill-rule="evenodd"
+                        d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z"
+                      />
+                    </svg>
+                    Processing
+                  </>
+                )}
+                <input
+                  multiple
+                  id="upload"
+                  onChange={getImagesHandler}
+                  accept="image/*"
+                  type="file"
+                />
+              </label>
+            )}
           </div>
         </div>
       </main>
