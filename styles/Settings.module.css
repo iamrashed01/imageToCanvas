@@ -45,11 +45,11 @@
   width: 24px;
   vertical-align: middle;
   margin-left: 10px;
+  color: #0070f3;
   transition: all 0.3s ease 0s;
 }
 
 .settingsToggeNtn:hover {
-  color: #0070f3;
   cursor: pointer;
 }
 
