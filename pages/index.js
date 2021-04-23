@@ -11,12 +11,20 @@ export default function Home() {
 
     if (files.length > 0) {
       for await (const file of files) {
-        const canvas = await convertFileIntoCanvas(file);
-        // convert canvas into bs64 and push into an array[]
-        bs64Array.push({ bs64: canvas.toDataURL(), fileName: file.name });
+        try {
+          const canvas = await convertFileIntoCanvas(file);
+          // convert canvas into bs64 and push into an array[]
+          if (canvas) {
+            bs64Array.push({ bs64: canvas.toDataURL(), fileName: file.name });
+          }
+        } catch (error) {
+          console.error(error.message);
+        }
       }
-      // client download given images as zip 
-      downloadImageAsZip(bs64Array);
+      // client download given images as zip
+      if (bs64Array.length > 0) {
+        downloadImageAsZip(bs64Array);
+      }
     }
   };
 
@@ -59,15 +67,14 @@ export default function Home() {
       };
 
       // reject while img on error occured
-      img.onerror = function(error){
-        return reject(error)
-      }
+      img.onerror = function (error) {
+        return reject(error);
+      };
       img.src = objectUrl;
     });
   };
 
   const createPlaceholderCanvas = (height, width) => {
-    
     // variables
     const text_color = "rgb(250 250 250)";
     const canvas_background_color = "rgb(133 119 119)";
@@ -75,7 +82,7 @@ export default function Home() {
     // create canvas element
     let canvas = document.createElement("canvas");
 
-    // resize canvas 
+    // resize canvas
     canvas.width = width;
     canvas.height = height;
 
@@ -92,7 +99,7 @@ export default function Home() {
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.direction = "inherit";
-    // add fill text into canvas 
+    // add fill text into canvas
     ctx.fillText(`${height} * ${width}`, width / 2, height / 2);
 
     // draw image
