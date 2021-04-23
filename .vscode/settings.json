@@ -1,6 +1,7 @@
 {
   "files.associations": {
-    "**/pages/*.js": "javascriptreact"
+    "**/pages/*.js": "javascriptreact",
+    "**/components/*.js": "javascriptreact"
   },
   "editor.formatOnSave": true,
   "files.autoSave": "afterDelay"
