@@ -129,7 +129,8 @@
   margin-left: 4px;
 }
 
-.uploadImage {
+.uploadImage,
+.downloadButton {
   background-color: transparent;
   color: #0070f3;
   border: 1px solid #0070f3;
@@ -141,15 +142,27 @@
   outline: none;
   box-shadow: none;
   display: inline-block;
-  width: 100px;
+  min-width: 100px;
   text-align: center;
   line-height: 31px;
+  white-space: nowrap;
 }
-.uploadImage:hover {
+.uploadImage:hover,
+.downloadButton:hover {
   background-color: #0070f3;
   color: #fff;
   cursor: pointer;
 }
+
+.uploadImage svg,
+.downloadButton svg {
+  vertical-align: middle;
+  height: 18px;
+  width: 18px;
+  margin-right: 6px;
+  margin-bottom: 3px;
+}
+
 .uploadImage input {
   opacity: 0;
   width: 0;
@@ -163,4 +176,27 @@
   width: 100%;
   text-align: center;
   padding-bottom: 3rem;
+}
+
+.rotaing {
+  animation: rotate 3s linear 0s infinite;
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.eraserBtn {
+  margin-left: 1rem;
+  color: #0070f3;
+  cursor: pointer;
+  min-width: unset;
+}
+.eraserBtn svg {
+  margin-right: 0;
 }
