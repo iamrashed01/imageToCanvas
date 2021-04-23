@@ -175,7 +175,10 @@
   transition: color 0.15s ease, border-color 0.15s ease;
   width: 100%;
   text-align: center;
-  padding-bottom: 3rem;
+}
+
+.mainControllerButtons {
+  margin-bottom: 3rem;
 }
 
 .rotaing {
@@ -199,4 +202,25 @@
 }
 .eraserBtn svg {
   margin-right: 0;
+}
+
+/* screen footer css */
+.screenFooter {
+  border-top: 1px solid #eaeaea;
+  border-radius: 10px;
+  transition: color 0.15s ease, border-color 0.15s ease;
+  width: 100%;
+  text-align: center;
+  display: flex;
+  padding: 1rem;
+  justify-content: space-between;
+}
+
+.uploadSize svg,
+.downloadSize svg {
+  vertical-align: middle;
+  height: 18px;
+  width: 18px;
+  margin-right: 6px;
+  margin-bottom: 3px;
 }
