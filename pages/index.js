@@ -5,34 +5,48 @@ import JSZip from "jszip";
 import { saveAs } from "file-saver";
 
 export default function Home() {
-  const getImages = async ({ target: { files } }) => {
-    var imagesList = [];
+  // reciving the images from onchange handdler
+  const getImagesHandler = async ({ target: { files } }) => {
+    var bs64Array = [];
 
     if (files.length > 0) {
       for await (const file of files) {
-        const canvas = await convertFileIntoCanvas(file);
-        imagesList.push({ bs64: canvas.toDataURL(), fileName: file.name });
+        try {
+          const canvas = await convertFileIntoCanvas(file);
+          // convert canvas into bs64 and push into an array[]
+          if (canvas) {
+            bs64Array.push({ bs64: canvas.toDataURL(), fileName: file.name });
+          }
+        } catch (error) {
+          console.error(error.message);
+        }
       }
-      downloadImageAsZip(imagesList);
+      // client download given images as zip
+      if (bs64Array.length > 0) {
+        downloadImageAsZip(bs64Array);
+      }
     }
   };
 
-  async function downloadImageAsZip(imagesList) {
+  // download bs64->images as zip
+  async function downloadImageAsZip(bs64Array) {
     let zip = new JSZip();
     const zipFileName = "image-to-canvas";
 
     // const imagesFolder = zip.folder("images_folder");
-    for await (const img of imagesList) {
+    for await (const obj of bs64Array) {
       await zip.file(
-        img.fileName,
-        img.bs64.replace("data:image/png;base64,", ""),
+        obj.fileName,
+        obj.bs64.replace("data:image/png;base64,", ""),
         {
           base64: true,
         }
       );
     }
 
+    // generate zip blob file
     zip.generateAsync({ type: "blob" }).then(function (content) {
+      // save as zip file
       saveAs(content, `${zipFileName.replace(/\.[^/.]+$/, "")}.zip`);
     });
   }
@@ -48,39 +62,50 @@ export default function Home() {
         const canvas = createPlaceholderCanvas(this.height, this.width);
         _URL.revokeObjectURL(objectUrl);
 
+        // resolve while img on load success
         return resolve(canvas);
+      };
+
+      // reject while img on error occured
+      img.onerror = function (error) {
+        return reject(error);
       };
       img.src = objectUrl;
     });
   };
 
   const createPlaceholderCanvas = (height, width) => {
-    var canvas = document.createElement("canvas");
-
-    canvas.width = width;
-    canvas.height = height;
-
+    // variables
     const text_color = "rgb(250 250 250)";
     const canvas_background_color = "rgb(133 119 119)";
 
+    // create canvas element
+    let canvas = document.createElement("canvas");
+
+    // resize canvas
+    canvas.width = width;
+    canvas.height = height;
+
+    // canvas getContext as 2d view
+    let ctx = canvas.getContext("2d");
     // styling the canvas
-    var ctx = canvas.getContext("2d");
     ctx.fillStyle = text_color;
     ctx.fillRect(0, 0, width, height);
     ctx.fillStyle = canvas_background_color;
 
-    // below is adding text to canvas
+    // below is adding and styling text/label to canvas
     ctx.font = `${16}px serif`;
     ctx.font = `${4}vw serif`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.direction = "inherit";
+    // add fill text into canvas
     ctx.fillText(`${height} * ${width}`, width / 2, height / 2);
 
     // draw image
     // ctx.drawImage(img, 10, 10);
 
-    // print the canvas to html body
+    // print the canvas into html body
     // document.body.appendChild(canvas);
 
     return canvas;
@@ -107,7 +132,7 @@ export default function Home() {
             <input
               multiple
               id="upload"
-              onChange={getImages}
+              onChange={getImagesHandler}
               accept="image/*"
               type="file"
             />
