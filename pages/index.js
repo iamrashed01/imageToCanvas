@@ -148,7 +148,10 @@ export default function Home() {
         <title>Image To Canvas | Image Placholder Generator</title>
         <link rel="icon" href="/favicon.ico" />
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
-        <meta property="og:title" content="Image To Canvas" />
+        <meta
+          property="og:title"
+          content="Image To Canvas | Image Placeholder Maker"
+        />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://imagetocanvas.vercel.app/" />
         <meta property="og:image" content="/banner.jpg" />
