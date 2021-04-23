@@ -145,8 +145,17 @@ export default function Home() {
   return (
     <div className={styles.container}>
       <Head>
-        <title>Create Next App</title>
+        <title>Image To Canvas | Image Placholder Generator</title>
         <link rel="icon" href="/favicon.ico" />
+        <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+        <meta property="og:title" content="Image To Canvas" />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://imagetocanvas.vercel.app/" />
+        <meta property="og:image" content="/banner.jpg" />
+        <meta
+          property="og:description"
+          content="ImageToCanvas - Free online Open Source placeholder image generator tool."
+        />
       </Head>
 
       <main className={styles.main}>
