@@ -18,7 +18,7 @@
 
 .footer {
   width: 100%;
-  height: 100px;
+  height: 5rem;
   border-top: 1px solid #eaeaea;
   display: flex;
   justify-content: center;
@@ -33,6 +33,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  font-size: 0.9rem;
+  color: #555;
 }
 
 .title a {
@@ -59,7 +61,7 @@
 
 .description {
   line-height: 1.5;
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   margin-bottom: 3rem;
 }
 
@@ -152,4 +154,13 @@
   opacity: 0;
   width: 0;
   height: 0;
+}
+
+.screen {
+  border: 1px solid #eaeaea;
+  border-radius: 10px;
+  transition: color 0.15s ease, border-color 0.15s ease;
+  width: 100%;
+  text-align: center;
+  padding-bottom: 3rem;
 }

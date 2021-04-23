@@ -1,0 +1,73 @@
+.settingsCard {
+  text-align: left;
+  padding: 7px;
+  margin-bottom: 5rem;
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #eaeaea;
+}
+
+.formControl {
+  display: flex;
+  align-items: center;
+  transition: all 0.3s ease 0s;
+}
+
+.formControl label {
+  display: block;
+  font-size: 0.7em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: #777;
+  white-space: nowrap;
+  margin-bottom: 0.4em;
+  margin-right: 0.5rem;
+  margin-top: 0.1rem;
+}
+.formControl input {
+  display: block;
+  width: 100%;
+  border-radius: 0.1rem;
+  color: #777;
+  height: 1.8em;
+  padding: 0 0.3em;
+  outline: none;
+  border: 0.1em solid #ccc;
+  min-width: 2rem;
+}
+
+.colorInput {
+  cursor: crosshair;
+}
+
+.settingsToggeNtn {
+  height: 24px;
+  width: 24px;
+  vertical-align: middle;
+  margin-left: 10px;
+  color: #0070f3;
+  transition: all 0.3s ease 0s;
+}
+
+.settingsToggeNtn:hover {
+  cursor: pointer;
+}
+
+.rotaing {
+  animation: rotate 3s linear 0s infinite;
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.disableSettings .formControl {
+  opacity: 0;
+  visibility: hidden;
+  transform: rotate3d(1, 1, -1, 3deg);
+}
