@@ -1,0 +1,21 @@
+{
+  "name": "image_to_canvas",
+  "short_name": "imagetocanvas",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#FFFFFF",
+  "background_color": "#FFFFFF",
+  "start_url": "/",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "sizes": "16x16",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
