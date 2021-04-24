@@ -1,11 +1,26 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+
+## Project Preview
+
+#### Demo link [imagetocanvas](https://imagetocanvas.vercel.app/)
+
+![Image To Canvas Preview](https://imagetocanvas.vercel.app/banner.jpg)
+
 
 ## Getting Started
 
-First, run the development server:
+First, install the packages:
 
 ```bash
-npm install or yarn install
+npm install
+# or
+yarn install
+```
+
+---
+
+Secondly, run the development server:
+
+```bash
 npm run dev
 # or
 yarn dev
